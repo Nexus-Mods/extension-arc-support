@@ -5,7 +5,7 @@ import {ArcGame} from './types';
 import * as Promise from 'bluebird';
 import * as fs from 'fs';
 import * as path from 'path';
-import { types } from 'vortex-api';
+import { log, types } from 'vortex-api';
 
 class ARCHandler implements types.IArchiveHandler {
   private mArc: ARCWrapper;
@@ -45,7 +45,11 @@ function createARCHandler(fileName: string,
 }
 
 function init(context: types.IExtensionContext) {
-  if (!fs.statSync(path.join(__dirname, 'ARCtool.exe'))) {
+  try {
+    fs.statSync(path.join(__dirname, 'ARCtool.exe'));
+  } catch (err) {
+    log('warn', 'To use MT Framework games (Dragon\'s Dogma) you need to download ARCtool.rar '
+      + `from http://www.fluffyquack.com/tools/ and unpack it to ${__dirname}`);
     return false;
   }
 
