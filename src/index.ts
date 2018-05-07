@@ -1,11 +1,12 @@
 import ARCWrapper from './ARCWrapper';
+import AttribDashlet from './AttribDashlet';
 import { arcGameId, arcVersion } from './gameSupport';
 import {ArcGame} from './types';
 
 import * as Promise from 'bluebird';
 import * as fs from 'fs';
 import * as path from 'path';
-import { log, types } from 'vortex-api';
+import { log, selectors, types } from 'vortex-api';
 
 class ARCHandler implements types.IArchiveHandler {
   private mArc: ARCWrapper;
@@ -44,16 +45,24 @@ function createARCHandler(fileName: string,
   return Promise.resolve(new ARCHandler(fileName, options));
 }
 
+function isSupported(state: types.IState) {
+  const gameMode = selectors.activeGameId(state);
+
+  return ['dragonsdogma'].indexOf(gameMode) !== -1;
+}
+
 function init(context: types.IExtensionContext) {
   try {
     fs.statSync(path.join(__dirname, 'ARCtool.exe'));
   } catch (err) {
     log('warn', 'To use MT Framework games (Dragon\'s Dogma) you need to download ARCtool.rar '
-      + `from http://www.fluffyquack.com/tools/ and unpack it to ${__dirname}`);
+      + `from http://www.tzarsectus.com/tools/ and unpack it to ${__dirname}`);
     return false;
   }
 
   context.registerArchiveType('arc', createARCHandler);
+  context.registerDashlet('ARC Support', 1, 2, 250, AttribDashlet,
+                          isSupported, () => ({}), undefined);
   return true;
 }
 
