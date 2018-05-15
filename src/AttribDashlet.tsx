@@ -7,7 +7,7 @@ import * as api from 'vortex-api';
 const { Dashlet } = api as any;
 
 const ARCTOOL_THREAD = 'http://residentevilmodding.boards.net/thread/5774/arctool';
-const DOWNLOAD_PAGE = 'http://www.tzarsectus.com/tools';
+const DOWNLOAD_PAGE = 'http://www.fluffyquack.com/tools';
 
 class AttribDashlet extends PureComponentEx<{}, {}> {
   public render() {

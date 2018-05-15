@@ -56,7 +56,7 @@ function init(context: types.IExtensionContext) {
     fs.statSync(path.join(__dirname, 'ARCtool.exe'));
   } catch (err) {
     log('warn', 'To use MT Framework games (Dragon\'s Dogma) you need to download ARCtool.rar '
-      + `from http://www.tzarsectus.com/tools/ and unpack it to ${__dirname}`);
+      + `from http://www.fluffyquack.com/tools/ and unpack it to ${__dirname}`);
     return false;
   }
 
