@@ -20,7 +20,13 @@ function download(url, outpath, callback) {
     });
 };
 
-fs.mkdirSync('dl');
+try {
+  fs.mkdirSync('dl');
+} catch (err) {
+  if (err.code !== 'EEXIST') {
+    throw err;
+  }
+}
 const dlPath = path.join('dl', 'ARCtool.rar');
 fs.stat(dlPath, err => {
   const extract = () => {
