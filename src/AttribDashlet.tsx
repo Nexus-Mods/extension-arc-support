@@ -1,7 +1,6 @@
-import opn = require('opn');
 import * as React from 'react';
 import { translate } from 'react-i18next';
-import { PureComponentEx } from 'vortex-api';
+import { PureComponentEx, util } from 'vortex-api';
 
 import * as api from 'vortex-api';
 const { Dashlet } = api as any;
@@ -33,11 +32,11 @@ class AttribDashlet extends PureComponentEx<{}, {}> {
   }
 
   private openThread = () => {
-    opn(ARCTOOL_THREAD);
+    (util as any).opn(ARCTOOL_THREAD);
   }
 
   private openDLPage = () => {
-    opn(DOWNLOAD_PAGE);
+    (util as any).opn(DOWNLOAD_PAGE);
   }
 }
 
