@@ -3,6 +3,7 @@ import {ArcGame} from './types';
 import * as Promise from 'bluebird';
 import { spawn } from 'child_process';
 import * as path from 'path';
+import { generate as shortid } from 'shortid';
 import { fs } from 'vortex-api';
 
 export interface IARCOptions {
@@ -39,9 +40,15 @@ class ARCWrapper {
   }
 
   public extract(archivePath: string, outputPath: string, options?: IARCOptions): Promise<void> {
-    const baseName = path.basename(archivePath, path.extname(archivePath));
-    const tempPath = path.join(path.dirname(archivePath), baseName);
-    return this.run('x', [ quote(archivePath) ], options || {})
+    const ext = path.extname(archivePath);
+    const baseName = path.basename(archivePath, ext);
+    const id = shortid();
+    const tempPath = path.join(path.dirname(archivePath), id + '_' + baseName);
+    // have to temporarily move the archive because arctool will use the file name as the name for the
+    // output directory and we want to avoid name conflicts
+    return fs.moveAsync(archivePath, tempPath + ext)
+      .then(() => this.run('x', [ quote(tempPath + ext) ], options || {}))
+      .then(() => fs.moveAsync(tempPath + ext, archivePath))
       .then(() => fs.moveAsync(tempPath, outputPath, { overwrite: true }));
   }
 
