@@ -96,7 +96,7 @@ class ARCWrapper {
       }
       args = args.concat(parameters);
 
-      const process = spawn(path.join(__dirname, 'ARCtool.exe'), args, {
+      const process = spawn(quote(path.join(__dirname, 'ARCtool.exe')), args, {
         shell: true,
       });
 
