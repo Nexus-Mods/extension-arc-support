@@ -1,3 +1,3 @@
 let webpack = require('vortex-api/bin/webpack').default;
 
-module.exports = webpack('mtframework-arc-support', __dirname);
+module.exports = webpack('mtframework-arc-support', __dirname, 4);

@@ -17,8 +17,8 @@
     "bluebird": "^3.5.0",
     "i18next": "^8.4.3",
     "node-7z": "Nexus-Mods/node-7z",
-    "ts-loader": "2.3.4",
+    "ts-loader": "^4.4.2",
     "vortex-api": "Nexus-Mods/vortex-api",
-    "webpack": "^3.1.0"
+    "webpack": "^4.17.1"
   }
 }
