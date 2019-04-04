@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { translate } from 'react-i18next';
+import { withTranslation } from 'react-i18next';
 import { PureComponentEx, util } from 'vortex-api';
 
 import * as api from 'vortex-api';
@@ -40,4 +40,4 @@ class AttribDashlet extends PureComponentEx<{}, {}> {
   }
 }
 
-export default translate(['common', 'arc-support'], { wait: false })(AttribDashlet);
+export default withTranslation(['common', 'arc-support'])(AttribDashlet as any) as React.ComponentClass<{}>;
