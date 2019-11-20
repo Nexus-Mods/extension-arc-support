@@ -1,6 +1,6 @@
 import {ArcGame} from './types';
 
-import * as Promise from 'bluebird';
+import Promise from 'bluebird';
 import { spawn } from 'child_process';
 import * as path from 'path';
 import { generate as shortid } from 'shortid';
