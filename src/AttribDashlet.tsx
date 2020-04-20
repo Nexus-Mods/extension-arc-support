@@ -40,4 +40,5 @@ class AttribDashlet extends PureComponentEx<{}, {}> {
   }
 }
 
-export default withTranslation(['common', 'arc-support'])(AttribDashlet as any) as React.ComponentClass<{}>;
+export default withTranslation(['common', 'arc-support'])(
+  AttribDashlet as any) as React.ComponentClass<{}>;
