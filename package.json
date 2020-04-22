@@ -11,14 +11,15 @@
   "author": "Black Tree Gaming Ltd.",
   "license": "GPL-3.0",
   "devDependencies": {
+    "@types/bluebird": "^3.5.30",
     "@types/i18next": "^8.4.0",
     "@types/redux": "^3.6.0",
     "babel-loader": "^7.1.1",
-    "bluebird": "^3.5.0",
+    "bluebird": "^3.7.2",
     "i18next": "^8.4.3",
     "node-7z": "Nexus-Mods/node-7z",
     "ts-loader": "^4.4.2",
-    "vortex-api": "Nexus-Mods/vortex-api",
+    "vortex-api": "Nexus-Mods/vortex-api#electron7",
     "webpack": "^4.17.1"
   }
 }

@@ -1,6 +1,6 @@
 import {ArcGame} from './types';
 
-import * as Promise from 'bluebird';
+import Promise from 'bluebird';
 import { spawn } from 'child_process';
 import * as path from 'path';
 import { generate as shortid } from 'shortid';
@@ -44,8 +44,8 @@ class ARCWrapper {
     const baseName = path.basename(archivePath, ext);
     const id = shortid();
     const tempPath = path.join(path.dirname(archivePath), id + '_' + baseName);
-    // have to temporarily move the archive because arctool will use the file name as the name for the
-    // output directory and we want to avoid name conflicts
+    // have to temporarily move the archive because arctool will use the file name as the name
+    // for the output directory and we want to avoid name conflicts
     return fs.moveAsync(archivePath, tempPath + ext)
       .then(() => this.run('x', [ quote(tempPath + ext) ], options || {}))
       .then(() => fs.moveAsync(tempPath + ext, archivePath))

@@ -3,7 +3,7 @@ import AttribDashlet from './AttribDashlet';
 import { arcGameId, arcVersion } from './gameSupport';
 import {ArcGame} from './types';
 
-import * as Promise from 'bluebird';
+import Promise from 'bluebird';
 import * as fs from 'fs';
 import * as path from 'path';
 import { log, selectors, types } from 'vortex-api';
