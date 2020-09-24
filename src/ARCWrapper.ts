@@ -106,11 +106,15 @@ class ARCWrapper {
 
       process.on('close', (code) => {
         if (code !== 0) {
-          return reject(new Error('ARCtool.exe failed with status code ' + code));
+          const err = new Error('ARCtool.exe failed with status code ' + code);
+          err['attachLogOnReport'] = true;
+          return reject(err);
         }
         // unfortunately ARCtool returns 0 even in error cases
         if (errorLines.length !== 0) {
-          return reject(new Error(errorLines.join('\n')));
+          const err = new Error(errorLines.join('\n'));
+          err['attachLogOnReport'] = true;
+          return reject(err);
         }
         return resolve();
       });
