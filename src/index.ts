@@ -51,6 +51,21 @@ function isSupported(state: types.IState) {
   return ['dragonsdogma'].indexOf(gameMode) !== -1;
 }
 
+function canMerge(api: types.IExtensionApi) {
+  // We don't actually want to merge any files here - we simply
+  //  want to register a merge so that the archive merges
+  //  kick off.
+  const state = api.getState();
+  if (!isSupported(state)) {
+    return undefined;
+  }
+  const test: types.IMergeFilter = {
+    baseFiles: (files: types.IDeployedFile[]) => [{ in: 'fakeFile', out: 'fakeFile' }],
+    filter: (fileName: string) => false,
+  };
+  return test;
+}
+
 function init(context: types.IExtensionContext) {
   try {
     fs.statSync(path.join(__dirname, 'ARCtool.exe'));
@@ -61,6 +76,7 @@ function init(context: types.IExtensionContext) {
   }
 
   context.registerArchiveType('arc', createARCHandler);
+  context.registerMerge(() => canMerge(context.api), () => Promise.resolve(), '');
   context.registerDashlet('ARC Support', 1, 2, 250, AttribDashlet,
                           isSupported, () => ({}), undefined);
   return true;
