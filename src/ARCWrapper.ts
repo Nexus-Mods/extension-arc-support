@@ -49,7 +49,11 @@ class ARCWrapper {
     return fs.moveAsync(archivePath, tempPath + ext)
       .then(() => this.run('x', [ quote(tempPath + ext) ], options || {}))
       .then(() => fs.moveAsync(tempPath + ext, archivePath))
-      .then(() => fs.moveAsync(tempPath, outputPath, { overwrite: true }));
+      .then(() => fs.moveAsync(tempPath, outputPath, { overwrite: true }))
+      // extracting generates a file order file we need to repackage correctly (in Dragon's Dogma at least).
+      // Note that _ext_ may contain .vortex_backup if we're not deploying clean, the file list should not
+      // contain that extension though
+      .then(() => fs.moveAsync(tempPath + ext + '.txt', outputPath + '.arc.txt', { overwrite: true }).catch(() => null));
   }
 
   public create(archivePath: string, source: string, options?: IARCOptions): Promise<void> {
@@ -87,12 +91,25 @@ class ARCWrapper {
         '-' + command,
         options.game !== undefined ? '-' + options.game : '-DD',
         '-pc',
-        '-noextcorrect',
+        // this should be ok but if we ever support merging in loose files, we'd probably
+        // want the extensions to be "corrected"
+        // '-noextcorrect',
+        // texRE6 is the default anyway
+        '-texRE6',
+        // this is set by guides around Dragon's Dogma. Not sure if/why this is necessary
+        '-alwayscomp',
+        // use a file order file
+        '-txt',
       ];
 
       if (options.version !== undefined) {
         args.push('-v');
         args.push(options.version.toFixed());
+      } else {
+        // correct default for Dragon's Dogma? We don't currently have a way
+        // to set options from the game extension so not entirely sure how to correctly
+        // set this if/when this extension is used for other games
+        args.push('-v', '7');
       }
       args = args.concat(parameters);
 
