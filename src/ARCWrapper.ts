@@ -26,6 +26,8 @@ function quote(input: string): string {
   return '"' + input + '"';
 }
 
+const winPathRE = /([a-zA-Z]:\\(?:\w+\\)*\w+(?:\.\w+)*)/;
+
 class ARCWrapper {
   public list(archivePath: string, options?: IARCOptions): Promise<string[]> {
     const outputFile = archivePath + '.verbose.txt';
@@ -140,7 +142,7 @@ class ARCWrapper {
         const lines = data.toString().split('\n');
         lines.forEach(line => {
           if (line.startsWith('Error')) {
-            errorLines.push(line);
+            errorLines.push(line.replace(winPathRE, '"$1"'));
           }
         });
       });
