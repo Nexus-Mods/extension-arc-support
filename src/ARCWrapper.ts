@@ -4,7 +4,7 @@ import Promise from 'bluebird';
 import { spawn } from 'child_process';
 import * as path from 'path';
 import { generate as shortid } from 'shortid';
-import { fs } from 'vortex-api';
+import { fs, log } from 'vortex-api';
 
 export interface IARCOptions {
   compression?: boolean;
@@ -26,7 +26,7 @@ function quote(input: string): string {
   return '"' + input + '"';
 }
 
-const winPathRE = /([a-zA-Z]:\\(?:\w+\\)*\w+(?:\.\w+)*)/;
+const winPathRE = /([a-zA-Z]:\\(?:[\w ]+\\)*[\w ]+(?:\.\w+)*)/;
 
 class ARCWrapper {
   public list(archivePath: string, options?: IARCOptions): Promise<string[]> {
@@ -46,10 +46,11 @@ class ARCWrapper {
     const baseName = path.basename(archivePath, ext);
     const id = shortid();
     const tempPath = path.join(path.dirname(archivePath), id + '_' + baseName);
+
     // have to temporarily move the archive because arctool will use the file name as the name
     // for the output directory and we want to avoid name conflicts
     return fs.moveAsync(archivePath, tempPath + ext)
-      .then(() => this.run('x', [ quote(tempPath + ext) ], options || {}))
+      .then(() => this.run('x', [ '-txt', quote(tempPath + ext) ], options || {}))
       .then(() => fs.moveAsync(tempPath + ext, archivePath))
       .then(() => fs.moveAsync(tempPath, outputPath, { overwrite: true }))
       // extracting generates a file order file we need to repackage correctly (in Dragon's Dogma at least).
@@ -59,7 +60,19 @@ class ARCWrapper {
   }
 
   public create(archivePath: string, source: string, options?: IARCOptions): Promise<void> {
-    return this.run('c', [ quote(source) ], options || {})
+    const args: string[] = [];
+
+    return fs.statAsync(source + '.arc.txt')
+      .then(() => {
+        args.push('-txt');
+      })
+      .catch(err => {
+        // this very likely means the mod isn't going to work because it indicates
+        // the "original" file doesn't exist, at least not in the same folder, so this
+        // arc file will not get loaded by the game.
+        log('warn', 'file order file missing', { source, error: err.message });
+      })
+      .then(() => this.run('c', [ ...args, quote(source) ], options || {}))
       .then(() => fs.moveAsync(source + '.arc', archivePath, { overwrite: true }));
   }
 
@@ -100,8 +113,6 @@ class ARCWrapper {
         '-texRE6',
         // this is set by guides around Dragon's Dogma. Not sure if/why this is necessary
         '-alwayscomp',
-        // use a file order file
-        '-txt',
       ];
 
       if (options.version !== undefined) {
