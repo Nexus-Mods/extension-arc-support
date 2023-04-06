@@ -4,7 +4,7 @@ import Promise from 'bluebird';
 import { spawn } from 'child_process';
 import * as path from 'path';
 import { generate as shortid } from 'shortid';
-import { fs, log } from 'vortex-api';
+import { fs, log, types, util } from 'vortex-api';
 
 export interface IARCOptions {
   compression?: boolean;
@@ -29,6 +29,14 @@ function quote(input: string): string {
 const winPathRE = /([a-zA-Z]:\\(?:[\w ]+\\)*[\w ]+(?:\.\w+)*)/;
 
 class ARCWrapper {
+
+  private mApi: types.IExtensionApi;
+
+  constructor(api: types.IExtensionApi) {   
+    console.log("ARCWrapper constructor", api); 
+    this.mApi = api;
+  }
+
   public list(archivePath: string, options?: IARCOptions): Promise<string[]> {
     const outputFile = archivePath + '.verbose.txt';
     let output: string[] = [];
@@ -135,11 +143,16 @@ class ARCWrapper {
       process.on('error', (err) => reject(err));
 
       process.on('close', (code) => {
+
         if (code !== 0) {
-          const err = new Error('ARCtool.exe failed with status code ' + code);
-          err['attachLogOnReport'] = true;
-          return reject(err);
+          log('error', 'ARCtool.exe failed with status code ' + code);
+          
+          this.mApi.showErrorNotification('ARCtool has failed.', 'ARCtool.exe failed with status code ' + code, {
+            allowReport:false
+          });
+          return reject(new util.ProcessCanceled('ARCtool.exe failed with status code ' + code));
         }
+
         // unfortunately ARCtool returns 0 even in error cases
         if (errorLines.length !== 0) {
           const err = new Error(errorLines.join('\n'));

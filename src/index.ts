@@ -14,11 +14,11 @@ class ARCHandler implements types.IArchiveHandler {
   private mGame: ArcGame;
   private mVersion: number;
 
-  constructor(fileName: string, options: types.IArchiveOptions) {
+  constructor(api: types.IExtensionApi, fileName: string, options: types.IArchiveOptions) {
     this.mArchivePath = fileName;
     this.mGame = arcGameId(options.gameId);
     this.mVersion = arcVersion(options.gameId);
-    this.mArc = new ARCWrapper();
+    this.mArc = new ARCWrapper(api);
   }
 
   public readDir(dirPath: string): Promise<string[]> {
@@ -40,9 +40,10 @@ class ARCHandler implements types.IArchiveHandler {
   }
 }
 
-function createARCHandler(fileName: string,
+function createARCHandler(api: types.IExtensionApi, fileName: string,
                           options: types.IArchiveOptions): Promise<types.IArchiveHandler> {
-  return Promise.resolve(new ARCHandler(fileName, options));
+                            log('info', 'createARCHandler');
+  return Promise.resolve(new ARCHandler(api, fileName, options));
 }
 
 function isSupported(state: types.IState) {
@@ -52,6 +53,7 @@ function isSupported(state: types.IState) {
 }
 
 function init(context: types.IExtensionContext) {
+
   try {
     fs.statSync(path.join(__dirname, 'ARCtool.exe'));
   } catch (err) {
@@ -60,9 +62,10 @@ function init(context: types.IExtensionContext) {
     return false;
   }
 
-  context.registerArchiveType('arc', createARCHandler);
-  context.registerDashlet('ARC Support', 1, 2, 250, AttribDashlet,
-                          isSupported, () => ({}), undefined);
+  context.registerArchiveType('arc', (fileName, options) => createARCHandler(context.api, fileName, options));
+
+  context.registerDashlet('ARC Support', 1, 2, 250, AttribDashlet, isSupported, () => ({}), undefined);
+
   return true;
 }
 
