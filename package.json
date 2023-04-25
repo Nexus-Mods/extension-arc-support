@@ -14,8 +14,8 @@
     "@types/bluebird": "^3.5.30",
     "@types/i18next": "^8.4.0",
     "@types/redux": "^3.6.0",
-    "babel-loader": "^7.1.1",
     "node-7z": "Nexus-Mods/node-7z",
+    "shortid": "2.2.8",
     "vortex-api": "Nexus-Mods/vortex-api",
     "vortex-ext-dependencies": "Nexus-Mods/vortex-ext-dependencies"
   }
